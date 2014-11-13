@@ -65,8 +65,8 @@ class MBoxReader(object):
                 "from": source,
                 "to": [],
                 "cc": [],
-                "subject": msg.get('Subject', '').strip(),
-                "date": msg.get('Date', '').strip(),
+                "subject": msg.get('Subject', '').strip() or None,
+                "date": msg.get('Date', '').strip() or None,
             }
 
             for to in msg.get('To', '').split(","):
@@ -79,9 +79,36 @@ class MBoxReader(object):
 
             yield email
 
+def links(emails):
+    for email in emails:
+        people = [email['from']]
+        people.extend(email['to'])
+        people.extend(email['cc'])
+
+        for src in people:
+            for tgt in people:
+                if src != tgt:
+                    yield src,tgt
+
 if __name__ == '__main__':
     import json
+    import networkx as nx
+
     reader = MBoxReader("fixtures/benjamin@bengfort.com.mbox")
-    #print json.dumps(reader.key_analysis(), indent=2)
-    with open('fixtures/links.json', 'w') as out:
-        json.dump(list(reader.extract()), out)
+    # print json.dumps(reader.key_analysis(), indent=2)
+    # with open('fixtures/links.json', 'w') as out:
+    #     json.dump(list(reader.extract()), out)
+
+    with open('fixtures/links.json', 'r') as f:
+        data  = json.load(f)
+
+    edges = Counter()
+    for edge in links(data):
+        edge = sorted(edge)
+        edges[tuple(edge)] += 1
+
+    G = nx.Graph()
+    for link, count in edges.items():
+        G.add_edge(link[0], link[1], count=count/2)
+
+
