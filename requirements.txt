@@ -2,8 +2,14 @@ PyYAML==3.11
 confire==0.2.0
 coverage==3.7.1
 decorator==3.4.0
+matplotlib==1.4.2
+mock==1.0.1
 networkx==1.9.1
 nose==1.3.4
+numpy==1.9.1
+pygraphviz==1.2
+pyparsing==2.0.3
 python-dateutil==2.2
+pytz==2014.9
 six==1.8.0
 wsgiref==0.1.2

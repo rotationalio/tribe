@@ -10,16 +10,21 @@
 # ID: extract.py [] benjamin@bengfort.com $
 
 """
-Extracts social network data from an email mbox
+Extracts social network data from an email mbox and exports it as a GraphML
+file format (which is suitable to use with Gephi, Neo4j etc)
 """
 
 ##########################################################################
 ## Imports
 ##########################################################################
 
+import networkx as nx
+
 from mailbox import mbox
-from datetime import datetime
-from collections import Counter
+from tribe.stats import FreqDist
+from itertools import combinations
+from tribe.utils import parse_date, strfnow
+from tribe.emails import EmailMeta, EmailAddress
 
 ##########################################################################
 ## MBoxReader
@@ -30,26 +35,22 @@ class MBoxReader(object):
     def __init__(self, path):
         self.path  = path
         self.mbox  = mbox(path)
-        self.start = None
-        self.finit = None
 
     def __iter__(self):
-        self.start = datetime.now()
         for msg in self.mbox:
             yield msg
-        self.finit = datetime.now()
 
-    def key_analysis(self):
+    def header_analysis(self):
         """
-        Performs an analysis of keys in the emails
+        Performs an analysis of the frequency of headers in the Mbox
         """
-        keys = Counter()
+        headers = FreqDist()
         for msg in self:
+            headers['X-Tribe-Message-Count'] += 1
             for key in msg.keys():
-                keys[key] += 1
+                headers[key] += 1
 
-        denom = float(len(self.mbox))
-        return dict((key, (val/denom)*100) for key,val in keys.items())
+        return headers
 
     def extract(self):
         """
@@ -57,58 +58,49 @@ class MBoxReader(object):
         """
         for msg in self:
 
-            source = msg.get('From', '').strip()
+            source = msg.get('From', '')
             if not source: continue
 
             # construct data output
-            email = {
-                "from": source,
-                "to": [],
-                "cc": [],
-                "subject": msg.get('Subject', '').strip() or None,
-                "date": msg.get('Date', '').strip() or None,
-            }
-
-            for to in msg.get('To', '').split(","):
-                if to:
-                    email['to'].append(to.strip())
-
-            for cc in msg.get('Cc', '').split(","):
-                if cc:
-                    email['cc'].append(cc.strip())
+            email = EmailMeta(
+                EmailAddress(source),
+                [EmailAddress(to) for to in msg.get('To', '').split(",")],
+                [EmailAddress(cc) for cc in msg.get('Cc', '').split(",")],
+                msg.get('Subject', '').strip() or None,
+                parse_date(msg.get('Date', '').strip() or None),
+            )
 
             yield email
 
-def links(emails):
-    for email in emails:
-        people = [email['from']]
-        people.extend(email['to'])
-        people.extend(email['cc'])
+    def extract_graph(self):
+        """
+        Extracts a Graph where the nodes are EmailAddress
+        """
+        links = FreqDist()
+        for email in self.extract():
+            people = [email.sender,]
+            people.extend(email.recipients)
+            people.extend(email.copied)
 
-        for src in people:
-            for tgt in people:
-                if src != tgt:
-                    yield src,tgt
+            people = set(addr._raw for addr in people)
+            people = sorted(people)
+
+            for combo in combinations(people, 2):
+                links[combo] += 1
+
+        G = nx.Graph(name="Email Network", mbox=self.path, extracted=strfnow())
+        for link in links.keys():
+            G.add_edge(*link, weight=links.freq(link))
+
+        return G
 
 if __name__ == '__main__':
-    import json
-    import networkx as nx
+    # Dump extracted email meta data to a pickle file for testing
+    import pickle
 
     reader = MBoxReader("fixtures/benjamin@bengfort.com.mbox")
-    # print json.dumps(reader.key_analysis(), indent=2)
-    # with open('fixtures/links.json', 'w') as out:
-    #     json.dump(list(reader.extract()), out)
-
-    with open('fixtures/links.json', 'r') as f:
-        data  = json.load(f)
-
-    edges = Counter()
-    for edge in links(data):
-        edge = sorted(edge)
-        edges[tuple(edge)] += 1
-
-    G = nx.Graph()
-    for link, count in edges.items():
-        G.add_edge(link[0], link[1], count=count/2)
+    emails = list(reader.extract())
+    with open('fixtures/emails.pickle', 'w') as f:
+        pickle.dump(emails, f, pickle.HIGHEST_PROTOCOL)
 
 
