@@ -64,8 +64,8 @@ class MBoxReader(object):
             # construct data output
             email = EmailMeta(
                 EmailAddress(source),
-                [EmailAddress(to) for to in msg.get('To', '').split(",")],
-                [EmailAddress(cc) for cc in msg.get('Cc', '').split(",")],
+                [EmailAddress(to) for to in msg.get('To', '').split(",") if to],
+                [EmailAddress(cc) for cc in msg.get('Cc', '').split(",") if cc],
                 msg.get('Subject', '').strip() or None,
                 parse_date(msg.get('Date', '').strip() or None),
             )
@@ -82,8 +82,9 @@ class MBoxReader(object):
             people.extend(email.recipients)
             people.extend(email.copied)
 
-            people = set(addr._raw for addr in people)
-            people = sorted(people)
+            people = filter(lambda p: p is not None, people)    # Filter out any None addresses
+            people = set(unicode(addr) for addr in people)      # Obtain only unique people
+            people = sorted(people)                             # Sort lexicographically for combinations
 
             for combo in combinations(people, 2):
                 links[combo] += 1

@@ -83,7 +83,7 @@ class EmailAddress(object):
         if self.is_parsed():
             return "<ParsedEmail: %s (%s)>" % (self.name, self.email)
         else:
-            return self._raw
+            return "<UnparseableEmail: (\"%s\")>" % self._raw
 
     def __str__(self):
         return unicode(self)
@@ -92,6 +92,6 @@ class EmailAddress(object):
         if self.name and self.email:
             return u"%s <%s>" % (self.name, self.email)
         elif self.email:
-            return self.email
+            return unicode(self.email)
         else:
-            return u"Unknown Email"
+            return None
