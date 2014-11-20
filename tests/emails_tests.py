@@ -46,7 +46,7 @@ class EmailAddressTests(unittest.TestCase):
         data = "benjamin@bengfort.com"
         email = EmailAddress(data)
 
-        self.assertEqual(email.name, None)
+        self.assertEqual(email.name, "")
         self.assertEqual(email.email, "benjamin@bengfort.com")
         self.assertEqual(email.domain, "bengfort.com")
         self.assertEqual(unicode(email), data)

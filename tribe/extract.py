@@ -23,6 +23,7 @@ import networkx as nx
 from mailbox import mbox
 from tribe.stats import FreqDist
 from itertools import combinations
+from email.utils import getaddresses
 from tribe.utils import parse_date, strfnow
 from tribe.emails import EmailMeta, EmailAddress
 
@@ -61,11 +62,14 @@ class MBoxReader(object):
             source = msg.get('From', '')
             if not source: continue
 
+            tos = msg.get_all('To', []) + msg.get_all('Resent-To', [])
+            ccs = msg.get_all('Cc', []) + msg.get_all('Resent-Cc', [])
+
             # construct data output
             email = EmailMeta(
                 EmailAddress(source),
-                [EmailAddress(to) for to in msg.get('To', '').split(",") if to],
-                [EmailAddress(cc) for cc in msg.get('Cc', '').split(",") if cc],
+                [EmailAddress(to) for to in getaddresses(tos)],
+                [EmailAddress(cc) for cc in getaddresses(ccs)],
                 msg.get('Subject', '').strip() or None,
                 parse_date(msg.get('Date', '').strip() or None),
             )
@@ -82,9 +86,9 @@ class MBoxReader(object):
             people.extend(email.recipients)
             people.extend(email.copied)
 
-            people = filter(lambda p: p is not None, people)    # Filter out any None addresses
-            people = set(unicode(addr) for addr in people)      # Obtain only unique people
-            people = sorted(people)                             # Sort lexicographically for combinations
+            people = filter(lambda p: p is not None, people)            # Filter out any None addresses
+            people = set(addr.email for addr in people if addr.email)   # Obtain only unique people
+            people = sorted(people)                                     # Sort lexicographically for combinations
 
             for combo in combinations(people, 2):
                 links[combo] += 1

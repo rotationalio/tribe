@@ -20,6 +20,8 @@ Data Structures for Email and EmailAddresses
 import re
 
 from collections import namedtuple
+from email.utils import parseaddr, formataddr
+from tribe.utils import unquote
 
 ##########################################################################
 ## EmailMeta NamedTuple
@@ -31,9 +33,7 @@ COPIED      = "copied"      # Should be a list of EmailAddresses
 SUBJECT     = "subject"     # Should be a string or None (not empty string)
 DATE        = "date"        # Should be a parsed Python datetime
 
-EMAILRE     = re.compile(r'"?(.*)"?\s*\<(.+@.+)\>', re.I)
 META_FIELDS = (SENDER, RECIPIENTS, COPIED, SUBJECT, DATE)
-
 EmailMeta   = namedtuple("EmailMeta", META_FIELDS)
 
 ##########################################################################
@@ -46,32 +46,19 @@ class EmailAddress(object):
     is represented as follows: John Doe <jdoe@example.com>.
     """
 
-    __slots__ = ('_raw', 'name', 'email')
+    __slots__ = ('name', 'email')
 
-    def __init__(self, raw):
-        self._raw  = raw.strip()               # Store raw data without whitespace
-        self.name  = self._parse_name(raw)     # Extract the name if it exists
-        self.email = self._parse_email(raw)    # Extract the email or just use the raw
-
-    def _parse_name(self, email):
-        match = EMAILRE.match(email)
-        if match:
-            return match.group(1).strip()
-        return None
-
-    def _parse_email(self, email):
-        match = EMAILRE.match(email)
-        if match:
-            return match.group(2)
-        return email.strip().lstrip("<").rstrip(">")
-
-    def is_parsed(self):
+    def __init__(self, email):
         """
-        Determines if the email was able to be parsed or not.
+        The email can be either a parsed tuple of (name, addr) pairs or it
+        might be a single string that requires parsing for RFC components.
         """
-        if EMAILRE.match(self._raw):
-            return True
-        return False
+
+        if isinstance(email, basestring):
+            email = parseaddr(unquote(email))
+
+        self.name, self.email  = (unquote(part) for part in email)
+        self.email = self.email.lower() # Lowercase the email for normalization
 
     @property
     def domain(self):
@@ -80,18 +67,10 @@ class EmailAddress(object):
         return None
 
     def __repr__(self):
-        if self.is_parsed():
-            return "<ParsedEmail: %s (%s)>" % (self.name, self.email)
-        else:
-            return "<UnparseableEmail: (\"%s\")>" % self._raw
+        return "<EmailAddress: %s (%s)>" % (repr(self.name), self.email)
 
     def __str__(self):
         return unicode(self)
 
     def __unicode__(self):
-        if self.name and self.email:
-            return u"%s <%s>" % (self.name, self.email)
-        elif self.email:
-            return unicode(self.email)
-        else:
-            return None
+        return formataddr((self.name, self.email))

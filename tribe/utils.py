@@ -17,12 +17,13 @@ Utility functions and decorators for Tribe
 ## Imports
 ##########################################################################
 
-import re
 import time
 
 from dateutil import parser
 from dateutil.tz import tzlocal, tzutc
 from datetime import date, datetime, timedelta
+from email.utils import unquote as email_unquote
+from email.utils import parsedate_tz, parsedate, mktime_tz
 
 ##########################################################################
 ## Format constants
@@ -43,7 +44,6 @@ COMMON_DATETIME  = "%d/%b/%Y:%H:%M:%S %z"
 ## Date Parser Utility
 ##########################################################################
 
-tzre = re.compile(r'\([A-Z:\+\-0-9]+\)$')
 def parse_date(dtstr):
     """
     Attempts to parse a date with given formats first, then default formats
@@ -51,11 +51,13 @@ def parse_date(dtstr):
     # Handle empty string or None
     if not dtstr: return None
 
-    try:
-        return parser.parse(dtstr)
-    except TypeError as e:
-        dtstr = tzre.sub('', dtstr.strip())
-        return parser.parse(dtstr)
+    # Attempt to use the email utils parser first
+    dt = parsedate_tz(dtstr)
+    if dt is not None:
+        return datetime.utcfromtimestamp(mktime_tz(dt)).replace(tzinfo=tzutc())
+
+    # Otherwise use the dateutil parser
+    return parser.parse(dtstr)
 
 def strfnow(fmt=HUMAN_DATETIME):
     """
@@ -66,6 +68,19 @@ def strfnow(fmt=HUMAN_DATETIME):
 ##########################################################################
 ## Other Helpers and Decorators
 ##########################################################################
+
+def unquote(str):
+    """
+    Return a new string which is an unquoted version of str. If str ends
+    and begins with double quotes, they are stripped off. Likewise if str
+    ends and begins with angle brackets, they are stripped off.
+
+    This method continues to unquote until the string is unchanged.
+    """
+    new = email_unquote(str)
+    if new != str:
+        return unquote(new)
+    return new
 
 def timeit(func):
     """
