@@ -23,6 +23,7 @@ import json
 import argparse
 import networkx as nx
 
+from tribe.viz import *
 from tribe.utils import timeit
 from tribe.stats import FreqDist
 from tribe.extract import MBoxReader
@@ -88,41 +89,13 @@ def info(args):
 
     return ""
 
-def entities(args):
+def draw(args):
     """
-    Search for all entities in the MBox
-
-    TODO: Remove this helper tool
+    Draw a GraphML with the tribe draw method.
     """
-
-    import unicodecsv as csv
-
-    @timeit
-    def timed_inner(path):
-        reader  = MBoxReader(path)
-        counter = FreqDist()
-
-        for email in reader.extract():
-            people = [email.sender,]
-            people.extend(email.recipients)
-            people.extend(email.copied)
-
-            people = filter(lambda p: p is not None, people)    # Filter out any None addresses
-            people = set(addr.email for addr in people)         # Obtain only unique people
-
-            for person in people:
-                counter[person] += 1
-
-        return counter
-
-
-    print "Starting entities extraction, could take time ..."
-    entities, seconds = timed_inner(args.mbox[0])
-    print "Entites extraction took %0.3f seconds" % seconds
-
-    writer = csv.writer(args.write, delimiter='\t')
-    for key, count in entities.most_common():
-        writer.writerow((count, key))
+    G = nx.read_graphml(args.graphml[0])
+    draw_social_network(G, args.write)
+    return ""
 
 ##########################################################################
 ## Main Function and Methodology
@@ -152,11 +125,11 @@ def main(*args):
     info_parser.add_argument('graphml', nargs="+", type=argparse.FileType('r'), help='Location of MBox(es) to get info for')
     info_parser.set_defaults(func=info)
 
-    # List Emails Command
-    entities_parser = subparsers.add_parser('entities', help='Search for all entities in the MBox')
-    entities_parser.add_argument('-w', '--write', type=argparse.FileType('w'), default=sys.stdout, help='Location to write data to')
-    entities_parser.add_argument('mbox', type=str, nargs=1, help='Path or location to MBox for analysis')
-    entities_parser.set_defaults(func=entities)
+    # Draw Command
+    draw_parser = subparsers.add_parser('draw', help='Draw a GraphML using the tribe draw method')
+    draw_parser.add_argument('-w', '--write', type=str, default='graph.png', help='Location to draw to')
+    draw_parser.add_argument('graphml', nargs=1, type=argparse.FileType('r'), help='Location of GraphML to draw')
+    draw_parser.set_defaults(func=draw)
 
     # Handle input from the command line
     args = parser.parse_args()            # Parse the arguments
