@@ -10,6 +10,8 @@ numpy==1.9.1
 pygraphviz==1.2
 pyparsing==2.0.3
 python-dateutil==2.2
+python-louvain==0.3
 pytz==2014.9
 six==1.8.0
+unicodecsv==0.9.4
 wsgiref==0.1.2
