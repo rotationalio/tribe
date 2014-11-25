@@ -51,13 +51,16 @@ def parse_date(dtstr):
     # Handle empty string or None
     if not dtstr: return None
 
-    # Attempt to use the email utils parser first
-    dt = parsedate_tz(dtstr)
-    if dt is not None:
-        return datetime.utcfromtimestamp(mktime_tz(dt)).replace(tzinfo=tzutc())
+    try:
+        # Attempt to use the email utils parser first
+        dt = parsedate_tz(dtstr)
+        if dt is not None:
+            return datetime.utcfromtimestamp(mktime_tz(dt)).replace(tzinfo=tzutc())
 
-    # Otherwise use the dateutil parser
-    return parser.parse(dtstr)
+        # Otherwise use the dateutil parser
+        return parser.parse(dtstr)
+    except:
+        return None
 
 def strfnow(fmt=HUMAN_DATETIME):
     """
