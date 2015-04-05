@@ -58,6 +58,19 @@ def header_analysis(args):
     json.dump(headers, args.write)
     return "Analysis complete in %0.3f seconds" % seconds
 
+def count_emails(args):
+    """
+    Count the number of emails in an MBox.
+    """
+
+    @timeit
+    def timed_inner(path):
+        reader = MBoxReader(path)
+        return reader.count()
+
+    count, seconds = timed_inner(args.mbox[0])
+    return "Found %d emails in %0.3f seconds" % (count, seconds)
+
 def extract(args):
     """
     Extract a GraphML file from an MBox
@@ -114,6 +127,11 @@ def main(*args):
     headers_parser.add_argument('mbox', type=str, nargs=1, help='Path or location to MBox for analysis')
     headers_parser.set_defaults(func=header_analysis)
 
+    # Count Emails Command
+    count_parser = subparsers.add_parser('count', help='Count the number of emails in an MBox.')
+    count_parser.add_argument('mbox', type=str, nargs=1, help='Path or location to MBox for analysis')
+    count_parser.set_defaults(func=count_emails)
+
     # Extract Command
     extract_parser = subparsers.add_parser('extract', help='Extract a GraphML file from an MBox')
     extract_parser.add_argument('-w', '--write', type=argparse.FileType('w'), default=sys.stdout, help='Location to write data to')
@@ -135,7 +153,7 @@ def main(*args):
     args = parser.parse_args()            # Parse the arguments
     try:
         msg = args.func(args)             # Call the default function
-        parser.exit(0, msg)               # Exit cleanly with message
+        parser.exit(0, msg+"\n")               # Exit cleanly with message
     except Exception as e:
         parser.error(str(e))              # Exit with error
 

@@ -53,6 +53,12 @@ class MBoxReader(object):
 
         return headers
 
+    def count(self):
+        """
+        Returns the number of emails in the MBox
+        """
+        return sum(1 for msg in self)
+
     def extract(self):
         """
         Extracts the meta data from the MBox
