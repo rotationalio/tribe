@@ -18,7 +18,13 @@ Administrative utility for working with Tribe data
 ## Imports
 ##########################################################################
 
+import os
 import sys
+
+PROJECT = os.path.join(os.path.dirname(__file__), "..")
+
+sys.path.append(PROJECT)
+
 import json
 import argparse
 import networkx as nx
