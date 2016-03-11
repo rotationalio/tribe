@@ -86,7 +86,7 @@ class FreqDist(Counter):
 
         try:
             import pylab
-        except ImportError:
+        except (ImportError, RuntimeError):
             raise ValueError("The plot function requires matplotlib.")
 
         if len(args) == 0:

@@ -8,7 +8,7 @@
 # Copyright (C) 2016 District Data Labs
 # For license information, see LICENSE.txt and NOTICE.md
 #
-# ID: setup.py [] benjamin@bengfort.com $
+# ID: setup.py [0d8dccc] benjamin@bengfort.com $
 
 """
 Setup script for installing tribe.

@@ -53,7 +53,9 @@ docs/_build/
 # PyBuilder
 target/
 
-fixtures
+fixtures/*
+!fixtures/*.tgz
+!fixtures/*.zip
 venv
 conf/tribe.yaml
 .ipynb_checkpoints

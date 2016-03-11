@@ -19,10 +19,31 @@ Visualization utility for Email social network
 
 import math
 import networkx as nx
-import matplotlib.pyplot as plt
 from operator import itemgetter
+from functools import wraps
 
+try:
+    import matplotlib.pyplot as plt
+except (ImportError, RuntimeError):
+    import warnings
+    plt = None
+
+def configure(func):
+    """
+    Configures visualization environment.
+    """
+    @wraps(func)
+    def wrapper(*args, **kwargs):
+        if plt is None:
+            warnings.warn("matplotlib is not installed or you are using a virtualenv!")
+            return None
+        return func(*args, **kwargs)
+
+    return wrapper
+
+@configure
 def show_simple_network(nodes=12, prob=0.2, hot=False):
+
     G = nx.erdos_renyi_graph(nodes, prob)
     pos = nx.spring_layout(G)
     nx.draw_networkx_nodes(G, pos, node_color='#0080C9', node_size=500, linewidths=1.0)
@@ -37,6 +58,7 @@ def show_simple_network(nodes=12, prob=0.2, hot=False):
 
     return G
 
+@configure
 def draw_social_network(G, path="graph.png", **kwargs):
 
     # A   = nx.to_agraph(G)
