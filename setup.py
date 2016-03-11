@@ -123,7 +123,7 @@ config = {
     "classifiers": CLASSIFIERS,
     "keywords": KEYWORDS,
     "zip_safe": False,
-    "scripts": ['bin/baleen'],
+    "scripts": ['tribe-admin.py'],
 }
 
 ##########################################################################
