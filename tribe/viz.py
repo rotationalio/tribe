@@ -7,7 +7,7 @@
 # Copyright (C) 2014 District Data Labs
 # For license information, see LICENSE.txt
 #
-# ID: viz.py [] benjamin@bengfort.com $
+# ID: viz.py [b96b383] benjamin@bengfort.com $
 
 """
 Visualization utility for Email social network

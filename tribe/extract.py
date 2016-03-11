@@ -7,7 +7,7 @@
 # Copyright (C) 2014 Bengfort.com
 # For license information, see LICENSE.txt
 #
-# ID: extract.py [] benjamin@bengfort.com $
+# ID: extract.py [6c9398c] benjamin@bengfort.com $
 
 """
 Extracts social network data from an email mbox and exports it as a GraphML

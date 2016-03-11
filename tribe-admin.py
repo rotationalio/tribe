@@ -8,7 +8,7 @@
 # Copyright (C) 2014 Bengfort.com
 # For license information, see LICENSE.txt
 #
-# ID: tribe-admin.py [] benjamin@bengfort.com $
+# ID: tribe-admin.py [5232e54] benjamin@bengfort.com $
 
 """
 Administrative utility for working with Tribe data

@@ -7,7 +7,7 @@
 # Copyright (C) 2014 District Data Labs
 # For license information, see LICENSE.txt
 #
-# ID: email.py [] benjamin@bengfort.com $
+# ID: emails.py [5232e54] benjamin@bengfort.com $
 
 """
 Data Structures for Email and EmailAddresses

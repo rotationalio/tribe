@@ -7,7 +7,7 @@
 # Copyright (C) 2014 District Data Labs
 # For license information, see LICENSE.txt
 #
-# ID: __init__.py [] benjamin@bengfort.com $
+# ID: __init__.py [0d8dccc] benjamin@bengfort.com $
 
 """
 Testing for the tribe module

@@ -7,7 +7,7 @@
 # Copyright (C) 2014 District Data Labs
 # For license information, see LICENSE.txt
 #
-# ID: config.py [] benjamin@bengfort.com $
+# ID: config.py [a537f84] benjamin@bengfort.com $
 
 """
 Uses confire to get meaningful configurations from a yaml file

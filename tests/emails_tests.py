@@ -7,7 +7,7 @@
 # Copyright (C) 2014 District Data Labs
 # For license information, see LICENSE.txt
 #
-# ID: emails_tests.py [] benjamin@bengfort.com $
+# ID: emails_tests.py [5232e54] benjamin@bengfort.com $
 
 """
 Testing for the utilities library in Tribe
