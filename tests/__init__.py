@@ -19,6 +19,13 @@ Testing for the tribe module
 
 import unittest
 
+
+##########################################################################
+## Module Constants
+##########################################################################
+
+TEST_VERSION = "1.1.2" ## Also the expected version of the package
+
 ##########################################################################
 ## Initialization Tests
 ##########################################################################
@@ -39,3 +46,10 @@ class InitializationTests(unittest.TestCase):
             import tribe
         except ImportError:
             self.fail("Could not import the tribe module")
+
+    def test_version(self):
+        """
+        Assert that the version is sane
+        """
+        import tribe
+        self.assertEqual(TEST_VERSION, tribe.__version__)

@@ -20,12 +20,8 @@ Administrative utility for working with Tribe data
 
 import os
 import sys
-
-PROJECT = os.path.join(os.path.dirname(__file__), "..")
-
-sys.path.append(PROJECT)
-
 import json
+import tribe
 import argparse
 import networkx as nx
 
@@ -40,7 +36,7 @@ from tribe.extract import MBoxReader
 
 DESCRIPTION = "An administrative utility for the Tribe Social Network Analysis"
 EPILOG      = "If there are any bugs or concerns, submit an issue on Github"
-VERSION     = "1.1.2"
+VERSION     = "tribe v{}".format(tribe.__version__)
 
 ##########################################################################
 ## Commands

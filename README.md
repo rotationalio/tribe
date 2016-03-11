@@ -2,6 +2,13 @@
 
 **Social Network Analysis of Email**
 
+<!-- [![PyPI version][pypi_img]][pypi_href] -->
+[![Build Status][travis_img]][travis_href]
+[![Coverage Status][coveralls_img]][coveralls_href]
+<!-- [![Code Health][health_img]][health_href] -->
+[![Documentation Status][rtfd_img]][rtfd_href]
+[![Stories in Ready][waffle_img]][waffle_href]
+
 [![SNA Visualization](docs/images/sna_viz.png)](docs/images/sna_viz.png)
 
 This repository contains code for the Social Network Analysis with Python
@@ -28,58 +35,72 @@ For more information: [Download your Data: Per-service information](https://supp
 
 ## Getting Started
 
-To work with this code, you'll need to do a few things to set up your environment, follow these steps to put together a _development ready environment_. Note that there are some variations of the methodology for various operating systems, the notes below are for Linux/Unix (including Mac OS X). Feel free to add Windows/Powershell instructions to help out as well. 
+To work with this code, you'll need to do a few things to set up your environment, follow these steps to put together a _development ready environment_. Note that there are some variations of the methodology for various operating systems, the notes below are for Linux/Unix (including Mac OS X). Feel free to add Windows/Powershell instructions to help out as well.
 
 1. Clone this repository
 
     Using the git command line tool, this is a pretty simple step:
-  
+
         $ git clone https://github.com/DistrictDataLabs/tribe.git
-    
-    Optionally, you can fork this repository into your own user directory, and clone that instead. 
+
+    Optionally, you can fork this repository into your own user directory, and clone that instead.
 
 2. Change directories (cd) into the project directory
 
         $ cd tribe
 
-3. (Optional, Recommended) Create a virtual environment for the code and dependencies 
+3. (Optional, Recommended) Create a virtual environment for the code and dependencies
 
     Using `virtualenv` by itself:
-    
+
         $ virtualenv venv
-    
+
     Using `virtualenvwrapper` (configured correctly):
-    
+
         $ mkvirtualenv -a $(pwd) tribe
-    
+
 4. Install the required third party packages using `pip`:
 
-        $ pip install -r requirements.txt 
-    
+        $ pip install -r requirements.txt
+
     Note, this may take a little while, but if you already have `matplotlib` and `pygraphviz` installed already, you should have little trouble.
 
 5. Add the `tribe` module to the Python path for easy import
 
     There are a variety of ways to accomplish this, you could set the `$PYTHONPATH` environment variable, you could edit the `scripts/tribe-admin.py` file to modify the `sys.path` at runtime; choose your favorite approach. Mine is to use `.pth` files as below:
-    
+
     First, find out the location of your Python cite packages with the following command:
-    
+
         $ python -c 'from distutils.sysconfig import get_python_lib; print get_python_lib();'
-    
+
     This is such a useful command, that I have it aliased in my .profile. Once you know this directory, create a .pth file with the current working directory in it as follows:
-    
+
         $ echo $(pwd) > tribe.pth
         $ mv tribe.pth /path/to/site/packages/
-    
-    Then simply move the .pth file to the location that was specified in the first command. Open up a new terminal window, and cd into your home directory. Open up a python iterpreter and type in `import tribe` - this should work with no errors. 
-    
-5. (Optional) Add a symlink to the `scripts/tribe-admin.py` script to your `$PATH`. 
 
-    The simplest way to deal with this is to create a directory, `$HOME/bin` then add that directory to your `$PATH` using your bash profile. Of course, there are a variety of ways to do this as well, you could add the `scripts` directory to your `$PATH`, symlink that directory to `/usr/local/bin` or a similar place on Windows. Whatever you're most comfortable with is fine. 
-    
+    Then simply move the .pth file to the location that was specified in the first command. Open up a new terminal window, and cd into your home directory. Open up a python iterpreter and type in `import tribe` - this should work with no errors.
+
+5. (Optional) Add a symlink to the `scripts/tribe-admin.py` script to your `$PATH`.
+
+    The simplest way to deal with this is to create a directory, `$HOME/bin` then add that directory to your `$PATH` using your bash profile. Of course, there are a variety of ways to do this as well, you could add the `scripts` directory to your `$PATH`, symlink that directory to `/usr/local/bin` or a similar place on Windows. Whatever you're most comfortable with is fine.
+
 6. Test everything is working:
 
         $ scripts/tribe-admin.py --help
-    
-    You should see a help screen printed out (if you have import errors, see step 5, if you have a non executable error, make sure that you chmod tribe-admin.py to be executable). 
-    
+
+    You should see a help screen printed out (if you have import errors, see step 5, if you have a non executable error, make sure that you chmod tribe-admin.py to be executable).
+
+
+<!-- References -->
+[pypi_img]: https://badge.fury.io/py/ddl-tribe.svg
+[pypi_href]: https://badge.fury.io/py/ddl-tribe
+[travis_img]: https://travis-ci.org/DistrictDataLabs/tribe.svg?branch=master
+[travis_href]: https://travis-ci.org/DistrictDataLabs/tribe/
+[coveralls_img]: https://coveralls.io/repos/github/DistrictDataLabs/tribe/badge.svg?branch=master
+[coveralls_href]: https://coveralls.io/github/DistrictDataLabs/tribe?branch=master
+[health_img]: https://landscape.io/github/DistrictDataLabs/tribe/master/landscape.svg?style=flat
+[health_href]: https://landscape.io/github/DistrictDataLabs/tribe/master
+[waffle_img]: https://badge.waffle.io/DistrictDataLabs/tribe.png?label=ready&title=Ready
+[waffle_href]: https://waffle.io/DistrictDataLabs/tribe
+[rtfd_img]: https://readthedocs.org/projects/ddl-tribe/badge/?version=latest
+[rtfd_href]: http://ddl-tribe.readthedocs.org/
