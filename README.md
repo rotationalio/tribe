@@ -1,11 +1,10 @@
 # Tribe
+**Tribe extracts a network from an email mbox and writes it to a graphml file for visualization and analysis.**
 
-**Social Network Analysis of Email**
-
-<!-- [![PyPI version][pypi_img]][pypi_href] -->
+[![PyPI version][pypi_img]][pypi_href]
 [![Build Status][travis_img]][travis_href]
 [![Coverage Status][coveralls_img]][coveralls_href]
-<!-- [![Code Health][health_img]][health_href] -->
+[![Code Health][health_img]][health_href]
 [![Documentation Status][rtfd_img]][rtfd_href]
 [![Stories in Ready][waffle_img]][waffle_href]
 
@@ -73,8 +72,8 @@ To work with this code, you'll need to do a few things to set up your environmen
 
 
 <!-- References -->
-[pypi_img]: https://badge.fury.io/py/ddl-tribe.svg
-[pypi_href]: https://badge.fury.io/py/ddl-tribe
+[pypi_img]: https://badge.fury.io/py/tribe.svg
+[pypi_href]: https://badge.fury.io/py/tribe
 [travis_img]: https://travis-ci.org/DistrictDataLabs/tribe.svg?branch=master
 [travis_href]: https://travis-ci.org/DistrictDataLabs/tribe/
 [coveralls_img]: https://coveralls.io/repos/github/DistrictDataLabs/tribe/badge.svg?branch=master
@@ -83,5 +82,5 @@ To work with this code, you'll need to do a few things to set up your environmen
 [health_href]: https://landscape.io/github/DistrictDataLabs/tribe/master
 [waffle_img]: https://badge.waffle.io/DistrictDataLabs/tribe.png?label=ready&title=Ready
 [waffle_href]: https://waffle.io/DistrictDataLabs/tribe
-[rtfd_img]: https://readthedocs.org/projects/ddl-tribe/badge/?version=latest
-[rtfd_href]: http://ddl-tribe.readthedocs.org/
+[rtfd_img]: http://readthedocs.org/projects/ddl-tribe/badge/?version=latest
+[rtfd_href]: http://ddl-tribe.readthedocs.org/en/latest/
