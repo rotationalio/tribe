@@ -13,6 +13,7 @@ unicodecsv==0.14.1
 
 ## Other Dependencies
 # networkX Dependencies
+#scipy==0.17.0
 decorator==4.0.9
 # confire Dependencies
 PyYAML==3.11
