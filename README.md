@@ -24,11 +24,11 @@ One easy place to obtain a communications network to perform graph analyses is y
 
         $ pip install tribe
 
-    Note that you may need administrator priviledges to do this.
+    Note that you may need administrator privileges to do this.
 
 3. Extract a graph from your email MBox as follows:
 
-        $ tribe-admin.py extract -w myemails.grpahml myemails.mbox
+        $ python tribe-admin.py extract -w myemails.graphml myemails.mbox
 
     Be patient, this could take some time, on my Macbook Pro it took 12 minutes to perform the complete extraction on an MBox that was 7.5 GB.
 
