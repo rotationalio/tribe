@@ -28,6 +28,7 @@ future==0.15.2
 #coverage==4.1
 #funcsigs==1.0.2
 #pbr==1.10.0
+#loremipsum==1.0.5
 
 ## Packaging Requirements
 #Python==2.7.11
@@ -35,6 +36,3 @@ future==0.15.2
 #wheel==0.29.0
 #setuptools==23.0.0
 #wsgiref==0.1.2
-
-## The following requirements were added by pip freeze:
-loremipsum==1.0.5
