@@ -41,6 +41,9 @@ class MBoxReader(object):
         for msg in self.mbox:
             yield msg
 
+    def __len__(self):
+        return self.count()
+
     def header_analysis(self):
         """
         Performs an analysis of the frequency of headers in the Mbox
@@ -113,5 +116,3 @@ if __name__ == '__main__':
     emails = list(reader.extract())
     with open('fixtures/emails.pickle', 'w') as f:
         pickle.dump(emails, f, pickle.HIGHEST_PROTOCOL)
-
-

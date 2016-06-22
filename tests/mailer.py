@@ -26,7 +26,11 @@ import os
 import time
 import random
 import smtplib
-import loremipsum as li
+
+try:
+    import loremipsum as li
+except ImportError:
+    li = None
 
 from collections import Counter
 from itertools import permutations
@@ -66,6 +70,9 @@ def generate_message(sender, recipient):
     """
     Generate a Lorem Ipsum email with sender and recipient.
     """
+    if li is None:
+        raise ValueError("Could not import loremipsum to generate messages!")
+
     msg = MIMEMultipart()
     msg['From'] = sender
     msg['To'] = recipient
