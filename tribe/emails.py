@@ -23,6 +23,10 @@ from collections import namedtuple
 from email.utils import parseaddr, formataddr
 from tribe.utils import unquote
 
+# 2 to 3 compatibility
+from six import string_types
+from builtins import str as text
+
 ##########################################################################
 ## EmailMeta NamedTuple
 ##########################################################################
@@ -54,7 +58,7 @@ class EmailAddress(object):
         might be a single string that requires parsing for RFC components.
         """
 
-        if isinstance(email, basestring):
+        if isinstance(email, string_types):
             email = parseaddr(unquote(email))
 
         self.name, self.email  = (unquote(part) for part in email)
@@ -70,7 +74,4 @@ class EmailAddress(object):
         return "<EmailAddress: %s (%s)>" % (repr(self.name), self.email)
 
     def __str__(self):
-        return unicode(self)
-
-    def __unicode__(self):
-        return formataddr((self.name, self.email))
+        return text(formataddr((self.name, self.email)))
