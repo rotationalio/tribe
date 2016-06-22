@@ -13,10 +13,12 @@ PYTHON_BIN := $(VIRTUAL_ENV)/bin
 # Clean build files
 clean:
 	find . -name "*.pyc" -print0 | xargs -0 rm -rf
+	find . -name "__pycache__" -print0 | xargs -0 rm -rf
 	-rm -rf htmlcov
 	-rm -rf .coverage
 	-rm -rf build
 	-rm -rf dist
+	-rm -rf site
 	-rm -rf $(PROJECT).egg-info
 
 # Targets for Coruscate testing

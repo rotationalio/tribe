@@ -60,6 +60,7 @@ def header_analysis(args):
     json.dump(headers, args.write)
     return "Analysis complete in %0.3f seconds" % seconds
 
+
 def count_emails(args):
     """
     Count the number of emails in an MBox.
@@ -73,6 +74,7 @@ def count_emails(args):
     count, seconds = timed_inner(args.mbox[0])
     return "Found %d emails in %0.3f seconds" % (count, seconds)
 
+
 def extract(args):
     """
     Extract a GraphML file from an MBox
@@ -83,13 +85,13 @@ def extract(args):
         reader = MBoxReader(path)
         return reader.extract_graph()
 
-    print "Starting Graph extraction, could take time ..."
+    print("Starting Graph extraction, could take time ...")
     G, seconds = timed_inner(args.mbox[0])
-    print "Graph extraction took %0.3f seconds" % seconds
+    print("Graph extraction took %0.3f seconds" % seconds)
 
     nx.write_graphml(G, args.write)
-    print "GraphML written out to %s" % (args.write.name)
-    return ""
+    return "GraphML written out to %s" % (args.write.name)
+
 
 def info(args):
     """
@@ -97,12 +99,13 @@ def info(args):
     """
     for idx, path in enumerate(args.graphml):
         G = nx.read_graphml(path)
-        print nx.info(G)
+        print(nx.info(G))
 
         if idx < len(args.graphml) - 1:
-            print "----"
+            print("----")
 
     return ""
+
 
 def draw(args):
     """
@@ -119,8 +122,11 @@ def draw(args):
 def main(*args):
 
     # Construct the argument parser
-    parser = argparse.ArgumentParser(description=DESCRIPTION, epilog=EPILOG, version=VERSION)
+    parser = argparse.ArgumentParser(description=DESCRIPTION, epilog=EPILOG)
     subparsers = parser.add_subparsers(title='commands', description='Administrative commands for Tribe')
+
+    # Version Command
+    parser.add_argument('-v', '--version', action='version', version=VERSION)
 
     # Headers Analysis Command
     headers_parser = subparsers.add_parser('headers', help='Perform an analysis of the email headers in an MBox')
@@ -136,7 +142,7 @@ def main(*args):
 
     # Extract Command
     extract_parser = subparsers.add_parser('extract', help='Extract a GraphML file from an MBox')
-    extract_parser.add_argument('-w', '--write', type=argparse.FileType('w'), default=sys.stdout, help='Location to write data to')
+    extract_parser.add_argument('-w', '--write', type=argparse.FileType('wb'), default=sys.stdout, help='Location to write data to')
     extract_parser.add_argument('mbox', type=str, nargs=1, help='Path or location to MBox for analysis')
     extract_parser.set_defaults(func=extract)
 
@@ -153,11 +159,11 @@ def main(*args):
 
     # Handle input from the command line
     args = parser.parse_args()            # Parse the arguments
-    try:
-        msg = args.func(args)             # Call the default function
-        parser.exit(0, msg+"\n")               # Exit cleanly with message
-    except Exception as e:
-        parser.error(str(e))              # Exit with error
+    # try:
+    msg = args.func(args)             # Call the default function
+    parser.exit(0, msg+"\n")               # Exit cleanly with message
+    # except Exception as e:
+    #     parser.error(str(e))              # Exit with error
 
 if __name__ == '__main__':
     main(*sys.argv[1:])

@@ -20,6 +20,7 @@ Testing for the utilities library in Tribe
 import unittest
 
 from tribe.emails import *
+from builtins import str as text
 
 ##########################################################################
 ## EmailAddress Tests
@@ -37,7 +38,7 @@ class EmailAddressTests(unittest.TestCase):
         self.assertEqual(email.name, "Benjamin Bengfort")
         self.assertEqual(email.email, "benjamin@bengfort.com")
         self.assertEqual(email.domain, "bengfort.com")
-        self.assertEqual(unicode(email), data)
+        self.assertEqual(text(email), data)
 
     def test_partial_email_parse(self):
         """
@@ -49,4 +50,4 @@ class EmailAddressTests(unittest.TestCase):
         self.assertEqual(email.name, "")
         self.assertEqual(email.email, "benjamin@bengfort.com")
         self.assertEqual(email.domain, "bengfort.com")
-        self.assertEqual(unicode(email), data)
+        self.assertEqual(text(email), data)
