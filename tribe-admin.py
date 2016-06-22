@@ -28,7 +28,7 @@ import networkx as nx
 from tribe.viz import *
 from tribe.utils import timeit
 from tribe.stats import FreqDist
-from tribe.extract import MBoxReader
+from tribe.extract import ConsoleMBoxReader as MBoxReader
 
 ##########################################################################
 ## Command Variables

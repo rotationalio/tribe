@@ -17,13 +17,16 @@ Utility functions and decorators for Tribe
 ## Imports
 ##########################################################################
 
+import os
 import time
 
+from functools import wraps
 from dateutil import parser
 from dateutil.tz import tzlocal, tzutc
 from datetime import date, datetime, timedelta
 from email.utils import unquote as email_unquote
 from email.utils import parsedate_tz, parsedate, mktime_tz
+
 
 ##########################################################################
 ## Format constants
@@ -39,6 +42,7 @@ ISO8601_DATETIME = "%Y-%m-%dT%H:%M:%S%z"
 ISO8601_DATE     = "%Y-%m-%d"
 ISO8601_TIME     = "%H:%M:%S"
 COMMON_DATETIME  = "%d/%b/%Y:%H:%M:%S %z"
+
 
 ##########################################################################
 ## Date Parser Utility
@@ -61,6 +65,7 @@ def parse_date(dtstr):
         return parser.parse(dtstr)
     except:
         return None
+
 
 def strfnow(fmt=HUMAN_DATETIME):
     """
@@ -85,13 +90,49 @@ def unquote(str):
         return unquote(new)
     return new
 
+
 def timeit(func):
     """
     Decorator that times the execution of a function
     """
+    @wraps(func)
     def wrapper(*args, **kwargs):
         start  = time.time()
         result = func(*args, **kwargs)
-        delta  = time.time() - start
-        return result, delta
+        return result, time.time() - start
     return wrapper
+
+
+def filesize(path, suffix='B'):
+    """
+    Computes a human readable file size for the given path
+    """
+    num = os.path.getsize(path)
+
+    for unit in ['','Ki','Mi','Gi','Ti','Pi','Ei','Zi']:
+        if abs(num) < 1024.0:
+            return "%3.1f%s%s" % (num, unit, suffix)
+        num /= 1024.0
+
+    return "%.1f%s%s" % (num, 'Yi', suffix)
+
+##########################################################################
+## Memoization
+##########################################################################
+
+def memoized(fget):
+    """
+    Return a property attribute for new-style classes that only calls its
+    getter on the first access. The result is stored and on subsequent
+    accesses is returned, preventing the need to call the getter any more.
+    https://github.com/estebistec/python-memoized-property
+    """
+    attr_name = '_{0}'.format(fget.__name__)
+
+    @wraps(fget)
+    def fget_memoized(self):
+        if not hasattr(self, attr_name):
+            setattr(self, attr_name, fget(self))
+        return getattr(self, attr_name)
+
+    return property(fget_memoized)
