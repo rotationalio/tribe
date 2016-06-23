@@ -47,6 +47,14 @@ The release versions that are sent to the Python package index (PyPI) are also t
 
 The versioning uses a three part version system, "a.b.c" - "a" represents a major release that may not be backwards compatible. "b" is incremented on minor releases that may contain extra features, but are backwards compatible. "c" releases are bug fixes or other micro changes that developers should feel free to immediately update to.
 
+### Version 1.2
+
+* **tag**: [v1.2](https://github.com/DistrictDataLabs/tribe/releases/tag/v1.2)
+* **release**:  Wednesday, June 22, 2016
+* **commit**: [see tag](#)
+
+In this release we have improved some of the handling code to make things a bit more robust with students who work on a variety of operating systems. For example we have added a progress indicator so that something appears to be happening on very large mbox files (and you're not left wondering). Additionally we have added better error handling so one bad email doesn't ruin your day. We also made the library Python 2.7 and Python 3.5 compatible with a better test suite. 
+
 ### Version 1.1.2
 
 * **tag**: [v1.1.2](https://github.com/DistrictDataLabs/tribe/releases/tag/v1.1.2)
