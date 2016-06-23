@@ -39,6 +39,9 @@ class MBoxReader(object):
         self.path  = path
         self.mbox  = mbox(path)
 
+        # Track errors through extraction process
+        self.errors = FreqDist()
+
     def __iter__(self):
         for msg in self.mbox:
             yield msg
@@ -68,16 +71,19 @@ class MBoxReader(object):
         """
         Extracts the meta data from the MBox
         """
-        for msg in self:
 
+        def parse(msg):
+            """
+            Inner function that knows how to extract an EmailMeta
+            """
             source = msg.get('From', '')
-            if not source: continue
+            if not source: return None
 
             tos = msg.get_all('To', []) + msg.get_all('Resent-To', [])
             ccs = msg.get_all('Cc', []) + msg.get_all('Resent-Cc', [])
 
             # construct data output
-            email = EmailMeta(
+            return EmailMeta(
                 EmailAddress(source),
                 [EmailAddress(to) for to in getaddresses(tos)],
                 [EmailAddress(cc) for cc in getaddresses(ccs)],
@@ -85,14 +91,27 @@ class MBoxReader(object):
                 parse_date(msg.get('Date', '').strip() or None),
             )
 
-            yield email
+        # Iterate through all messages in self, tracking errors
+        # Catch any exceptions and record them, then move forward
+        # NOTE: This will allow the progress bar to work
+        for msg in self:
+            try:
+                email = parse(msg)
+                if email is not None:
+                    yield email
+            except Exception as e:
+                self.errors[e] += 1
+                continue
 
     def extract_graph(self):
         """
         Extracts a Graph where the nodes are EmailAddress
         """
-        links = FreqDist()
-        for email in self.extract():
+
+        def relationships(email):
+            """
+            Inner function that constructs email relationships
+            """
             people = [email.sender,]
             people.extend(email.recipients)
             people.extend(email.copied)
@@ -102,12 +121,30 @@ class MBoxReader(object):
             people = sorted(people)                                     # Sort lexicographically for combinations
 
             for combo in combinations(people, 2):
-                links[combo] += 1
+                yield combo
 
+
+        # Keep track of all the email to email links
+        links = FreqDist()
+
+        # Iterate over all the extracted emails
+        # Catch exceptions, if any, and move forward
+        # NOTE: This will allow the progress bar to work
+        # NOTE: This will build the graph data structure in memory
+        for email in self.extract():
+            try:
+                for combo in relationships(email):
+                    links[combo] += 1
+            except Exception as e:
+                self.errors[e] += 1
+                continue
+
+        # Construct the networkx graph and add edges
         G = nx.Graph(name="Email Network", mbox=self.path, extracted=strfnow())
         for link in links.keys():
             G.add_edge(*link, weight=links.freq(link))
 
+        # Return the generated graph
         return G
 
 

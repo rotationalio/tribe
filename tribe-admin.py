@@ -87,11 +87,19 @@ def extract(args):
         reader = MBoxReader(path)
         G = reader.extract_graph()
         nx.write_graphml(G, outpath)
-        return G
+        return reader.errors
 
     print("Starting Graph extraction, a long running process")
-    G, seconds = timed_inner(args.mbox[0], args.write)
+    errors, seconds = timed_inner(args.mbox[0], args.write)
     print("GraphML written out to {}".format(args.write.name))
+
+    if errors:
+        print("\nThe following errors were encountered:")
+        for err, num in errors.most_common():
+            print("    {}: {}".format(num, err))
+        print("\n")
+    else:
+        print("\nNo errors encountered in processing\n")
 
     return "Graph extraction took {}".format(humanizedelta(seconds=seconds))
 
