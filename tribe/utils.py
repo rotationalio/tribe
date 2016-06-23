@@ -24,6 +24,7 @@ from functools import wraps
 from dateutil import parser
 from dateutil.tz import tzlocal, tzutc
 from datetime import date, datetime, timedelta
+from dateutil.relativedelta import relativedelta
 from email.utils import unquote as email_unquote
 from email.utils import parsedate_tz, parsedate, mktime_tz
 
@@ -72,6 +73,22 @@ def strfnow(fmt=HUMAN_DATETIME):
     Returns a string representation of the current timestamp
     """
     return datetime.now(tzlocal()).strftime(fmt)
+
+
+def humanizedelta(*args, **kwargs):
+    """
+    Wrapper around dateutil.relativedelta (same construtor args) and returns
+    a humanized string representing the detla in a meaningful way.
+    """
+    delta = relativedelta(*args, **kwargs)
+    attrs = ('years', 'months', 'days', 'hours', 'minutes', 'seconds')
+    parts = [
+        '%d %s' % (getattr(delta, attr), getattr(delta, attr) > 1 and attr or attr[:-1])
+        for attr in attrs if getattr(delta, attr)
+    ]
+
+    return " ".join(parts)
+
 
 ##########################################################################
 ## Other Helpers and Decorators

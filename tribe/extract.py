@@ -18,7 +18,6 @@ file format (which is suitable to use with Gephi, Neo4j etc)
 ## Imports
 ##########################################################################
 
-import pyprind as pb
 import networkx as nx
 
 from mailbox import mbox
@@ -26,6 +25,7 @@ from tribe.stats import FreqDist
 from itertools import combinations
 from email.utils import getaddresses
 from tribe.emails import EmailMeta, EmailAddress
+from tribe.progress import AsyncProgress as Progress
 from tribe.utils import parse_date, strfnow, timeit, filesize
 
 
@@ -123,10 +123,6 @@ class ConsoleMBoxReader(MBoxReader):
     def __init__(self, *args, **kwargs):
         # Get console settings from the kwargs
         self.verbose = kwargs.pop('verbose', True)
-        self.track_time = kwargs.pop('track_time', False)
-        self.width = kwargs.pop('width', 30)
-        self.title = kwargs.pop('title', '')
-        self.monitor = kwargs.pop('monitor', False)
 
         # Initialize the MBoxReader
         super(ConsoleMBoxReader, self).__init__(*args, **kwargs)
@@ -137,13 +133,11 @@ class ConsoleMBoxReader(MBoxReader):
                 self.path, filesize(self.path)
             ))
 
-        bar, delta = self._init_pbar()
+        bar = Progress()
         for msg in super(ConsoleMBoxReader, self).__iter__():
             yield msg
             bar.update()
-
-        if self.verbose:
-            print("Initialization complete in {:0.3f} seconds".format(delta))
+        bar.stop()
 
     def count(self, refresh=False):
         """
@@ -152,20 +146,6 @@ class ConsoleMBoxReader(MBoxReader):
         if not hasattr(self, '_count') or not self._count or refresh:
             self._count = sum(1 for _ in super(ConsoleMBoxReader, self).__iter__())
         return self._count
-
-    @timeit
-    def _init_pbar(self):
-        """
-        Progress bar initialization requires a full pass of the MBox file
-        """
-        n = self.count()
-        return pb.ProgBar(
-            n,
-            track_time=self.track_time,
-            width=self.width,
-            title=self.title,
-            monitor=self.monitor,
-        )
 
 
 if __name__ == '__main__':
