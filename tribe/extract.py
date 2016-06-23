@@ -24,8 +24,10 @@ from mailbox import mbox
 from tribe.stats import FreqDist
 from itertools import combinations
 from email.utils import getaddresses
-from tribe.utils import parse_date, strfnow
 from tribe.emails import EmailMeta, EmailAddress
+from tribe.progress import AsyncProgress as Progress
+from tribe.utils import parse_date, strfnow, timeit, filesize
+
 
 ##########################################################################
 ## MBoxReader
@@ -37,9 +39,15 @@ class MBoxReader(object):
         self.path  = path
         self.mbox  = mbox(path)
 
+        # Track errors through extraction process
+        self.errors = FreqDist()
+
     def __iter__(self):
         for msg in self.mbox:
             yield msg
+
+    def __len__(self):
+        return self.count()
 
     def header_analysis(self):
         """
@@ -63,16 +71,19 @@ class MBoxReader(object):
         """
         Extracts the meta data from the MBox
         """
-        for msg in self:
 
+        def parse(msg):
+            """
+            Inner function that knows how to extract an EmailMeta
+            """
             source = msg.get('From', '')
-            if not source: continue
+            if not source: return None
 
             tos = msg.get_all('To', []) + msg.get_all('Resent-To', [])
             ccs = msg.get_all('Cc', []) + msg.get_all('Resent-Cc', [])
 
             # construct data output
-            email = EmailMeta(
+            return EmailMeta(
                 EmailAddress(source),
                 [EmailAddress(to) for to in getaddresses(tos)],
                 [EmailAddress(cc) for cc in getaddresses(ccs)],
@@ -80,14 +91,27 @@ class MBoxReader(object):
                 parse_date(msg.get('Date', '').strip() or None),
             )
 
-            yield email
+        # Iterate through all messages in self, tracking errors
+        # Catch any exceptions and record them, then move forward
+        # NOTE: This will allow the progress bar to work
+        for msg in self:
+            try:
+                email = parse(msg)
+                if email is not None:
+                    yield email
+            except Exception as e:
+                self.errors[e] += 1
+                continue
 
     def extract_graph(self):
         """
         Extracts a Graph where the nodes are EmailAddress
         """
-        links = FreqDist()
-        for email in self.extract():
+
+        def relationships(email):
+            """
+            Inner function that constructs email relationships
+            """
             people = [email.sender,]
             people.extend(email.recipients)
             people.extend(email.copied)
@@ -97,13 +121,69 @@ class MBoxReader(object):
             people = sorted(people)                                     # Sort lexicographically for combinations
 
             for combo in combinations(people, 2):
-                links[combo] += 1
+                yield combo
 
+
+        # Keep track of all the email to email links
+        links = FreqDist()
+
+        # Iterate over all the extracted emails
+        # Catch exceptions, if any, and move forward
+        # NOTE: This will allow the progress bar to work
+        # NOTE: This will build the graph data structure in memory
+        for email in self.extract():
+            try:
+                for combo in relationships(email):
+                    links[combo] += 1
+            except Exception as e:
+                self.errors[e] += 1
+                continue
+
+        # Construct the networkx graph and add edges
         G = nx.Graph(name="Email Network", mbox=self.path, extracted=strfnow())
         for link in links.keys():
             G.add_edge(*link, weight=links.freq(link))
 
+        # Return the generated graph
         return G
+
+
+class ConsoleMBoxReader(MBoxReader):
+    """
+    Wraps the __iter__ class with a console based progress bar for console
+    output and timing information (especially for large MBox files).
+
+    Note: in order for this to work, the super class must always use __iter__
+    Note: this is a bit more expensive because a count is always performed.
+    """
+
+    def __init__(self, *args, **kwargs):
+        # Get console settings from the kwargs
+        self.verbose = kwargs.pop('verbose', True)
+
+        # Initialize the MBoxReader
+        super(ConsoleMBoxReader, self).__init__(*args, **kwargs)
+
+    def __iter__(self):
+        if self.verbose:
+            print("Initializing MBox iteration on {} ({})".format(
+                self.path, filesize(self.path)
+            ))
+
+        bar = Progress()
+        for msg in super(ConsoleMBoxReader, self).__iter__():
+            yield msg
+            bar.update()
+        bar.stop()
+
+    def count(self, refresh=False):
+        """
+        Memoize the count function to minimize the reads of large MBox files.
+        """
+        if not hasattr(self, '_count') or not self._count or refresh:
+            self._count = sum(1 for _ in super(ConsoleMBoxReader, self).__iter__())
+        return self._count
+
 
 if __name__ == '__main__':
     # Dump extracted email meta data to a pickle file for testing
@@ -113,5 +193,3 @@ if __name__ == '__main__':
     emails = list(reader.extract())
     with open('fixtures/emails.pickle', 'w') as f:
         pickle.dump(emails, f, pickle.HIGHEST_PROTOCOL)
-
-

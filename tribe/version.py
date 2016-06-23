@@ -19,8 +19,8 @@ Stores version information such that it can be read by setuptools.
 
 __version_info__ = {
     'major': 1,
-    'minor': 1,
-    'micro': 3,
+    'minor': 2,
+    'micro': 0,
     'releaselevel': 'final',
     'serial': 0,
 }

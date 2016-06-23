@@ -61,11 +61,6 @@ def show_simple_network(nodes=12, prob=0.2, hot=False):
 @configure
 def draw_social_network(G, path="graph.png", **kwargs):
 
-    # A   = nx.to_agraph(G)
-    # A.layout()
-
-    # A.draw(path)
-
     k = 1/math.sqrt(G.order()) * 2
     pos = nx.spring_layout(G, k=k)
 

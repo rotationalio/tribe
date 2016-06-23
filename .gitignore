@@ -56,6 +56,9 @@ target/
 fixtures/*
 !fixtures/*.tgz
 !fixtures/*.zip
+tests/fixtures/
+!tests/fixtures/*.tgz
+!tests/fixtures/*.zip
 venv
 conf/tribe.yaml
 .ipynb_checkpoints
