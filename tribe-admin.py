@@ -18,17 +18,15 @@ Administrative utility for working with Tribe data
 ## Imports
 ##########################################################################
 
-import os
 import sys
 import json
 import tribe
 import argparse
 import networkx as nx
 
-from tribe.viz import *
 from tribe.utils import timeit
-from tribe.stats import FreqDist
 from tribe.utils import humanizedelta
+from tribe.viz import draw_social_network
 from tribe.extract import ConsoleMBoxReader as MBoxReader
 
 ##########################################################################
@@ -165,17 +163,17 @@ def main(*args):
 
     # Draw Command
     draw_parser = subparsers.add_parser('draw', help='Draw a GraphML using the tribe draw method')
-    draw_parser.add_argument('-w', '--write', type=str, default='graph.png', help='Location to draw to')
+    draw_parser.add_argument('-w', '--write', type=str, default=None, help='Location to draw to')
     draw_parser.add_argument('graphml', nargs=1, type=argparse.FileType('r'), help='Location of GraphML to draw')
     draw_parser.set_defaults(func=draw)
 
     # Handle input from the command line
     args = parser.parse_args()            # Parse the arguments
-    # try:
-    msg = args.func(args)             # Call the default function
-    parser.exit(0, msg+"\n")               # Exit cleanly with message
-    # except Exception as e:
-    #     parser.error(str(e))              # Exit with error
+    try:
+        msg = args.func(args)             # Call the default function
+        parser.exit(0, msg+"\n")               # Exit cleanly with message
+    except Exception as e:
+        parser.error(str(e))              # Exit with error
 
 if __name__ == '__main__':
     main(*sys.argv[1:])

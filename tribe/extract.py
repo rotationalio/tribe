@@ -26,7 +26,7 @@ from itertools import combinations
 from email.utils import getaddresses
 from tribe.emails import EmailMeta, EmailAddress
 from tribe.progress import AsyncProgress as Progress
-from tribe.utils import parse_date, strfnow, timeit, filesize
+from tribe.utils import parse_date, strfnow, filesize
 
 
 ##########################################################################
@@ -170,17 +170,22 @@ class ConsoleMBoxReader(MBoxReader):
                 self.path, filesize(self.path)
             ))
 
-        bar = Progress()
+        # Build the progress bar
+        pbar = Progress()
+
+        # Iterate through the messages and update the progress bar
         for msg in super(ConsoleMBoxReader, self).__iter__():
             yield msg
-            bar.update()
-        bar.stop()
+            pbar.update()
+
+        # Stop the progress bar and flush
+        pbar.stop()
 
     def count(self, refresh=False):
         """
         Memoize the count function to minimize the reads of large MBox files.
         """
-        if not hasattr(self, '_count') or not self._count or refresh:
+        if not hasattr(self, '_count') or refresh:
             self._count = sum(1 for _ in super(ConsoleMBoxReader, self).__iter__())
         return self._count
 

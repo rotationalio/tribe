@@ -23,10 +23,10 @@ import time
 from functools import wraps
 from dateutil import parser
 from dateutil.tz import tzlocal, tzutc
-from datetime import date, datetime, timedelta
+from datetime import datetime, timedelta
 from dateutil.relativedelta import relativedelta
 from email.utils import unquote as email_unquote
-from email.utils import parsedate_tz, parsedate, mktime_tz
+from email.utils import parsedate_tz, mktime_tz
 
 
 ##########################################################################
@@ -64,7 +64,7 @@ def parse_date(dtstr):
 
         # Otherwise use the dateutil parser
         return parser.parse(dtstr)
-    except:
+    except Exception:
         return None
 
 
@@ -94,7 +94,7 @@ def humanizedelta(*args, **kwargs):
 ## Other Helpers and Decorators
 ##########################################################################
 
-def unquote(str):
+def unquote(s):
     """
     Return a new string which is an unquoted version of str. If str ends
     and begins with double quotes, they are stripped off. Likewise if str
@@ -102,8 +102,8 @@ def unquote(str):
 
     This method continues to unquote until the string is unchanged.
     """
-    new = email_unquote(str)
-    if new != str:
+    new = email_unquote(s)
+    if new != s:
         return unquote(new)
     return new
 

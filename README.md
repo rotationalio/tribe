@@ -118,9 +118,9 @@ The versioning uses a three part version system, "a.b.c" - "a" represents a majo
 
 * **tag**: [v1.2](https://github.com/DistrictDataLabs/tribe/releases/tag/v1.2)
 * **release**:  Wednesday, June 22, 2016
-* **commit**: [see tag](#)
+* **commit**: [cac3d6c](https://github.com/DistrictDataLabs/tribe/commit/cac3d6cb3f95e9d114528d9beef5307c16ec7266)
 
-In this release we have improved some of the handling code to make things a bit more robust with students who work on a variety of operating systems. For example we have added a progress indicator so that something appears to be happening on very large mbox files (and you're not left wondering). Additionally we have added better error handling so one bad email doesn't ruin your day. We also made the library Python 2.7 and Python 3.5 compatible with a better test suite. 
+In this release we have improved some of the handling code to make things a bit more robust with students who work on a variety of operating systems. For example we have added a progress indicator so that something appears to be happening on very large mbox files (and you're not left wondering). Additionally we have added better error handling so one bad email doesn't ruin your day. We also made the library Python 2.7 and Python 3.5 compatible with a better test suite.
 
 ### Version 1.1.2
 

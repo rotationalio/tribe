@@ -45,16 +45,18 @@ KEYWORDS     = ('graph', 'networkx', 'data science', 'analysis', 'social network
 ## Define the classifiers
 ## See https://pypi.python.org/pypi?%3Aaction=list_classifiers
 CLASSIFIERS  = (
-    'Development Status :: 4 - Beta',
+    'Development Status :: 5 - Production/Stable',
     'Environment :: Console',
-    'Intended Audience :: Developers',
+    'Intended Audience :: Science/Research',
     'License :: OSI Approved :: MIT License',
     'Natural Language :: English',
     'Operating System :: OS Independent',
     'Programming Language :: Python',
     'Programming Language :: Python :: 2.7',
-    'Topic :: Software Development',
-    'Topic :: Software Development :: Libraries :: Python Modules',
+    'Programming Language :: Python :: 3.5',
+    'Topic :: Communications :: Email',
+    'Topic :: Scientific/Engineering :: Information Analysis',
+    'Topic :: Scientific/Engineering :: Visualization',
     'Topic :: Utilities',
 )
 

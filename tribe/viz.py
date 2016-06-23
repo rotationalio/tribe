@@ -50,7 +50,7 @@ def show_simple_network(nodes=12, prob=0.2, hot=False):
     nx.draw_networkx_edges(G, pos, width=1.0, style='dashed', alpha=0.75)
 
     if hot:
-        center, degree = sorted(G.degree().items(), key=itemgetter(1))[-1]
+        center, _ = sorted(G.degree().items(), key=itemgetter(1))[-1]
         nx.draw_networkx_nodes(G, pos, nodelist=[center], node_size=600, node_color="#D9AF0B")
 
     plt.axis('off')
@@ -59,7 +59,7 @@ def show_simple_network(nodes=12, prob=0.2, hot=False):
     return G
 
 @configure
-def draw_social_network(G, path="graph.png", **kwargs):
+def draw_social_network(G, path=None):
 
     k = 1/math.sqrt(G.order()) * 2
     pos = nx.spring_layout(G, k=k)
@@ -69,4 +69,7 @@ def draw_social_network(G, path="graph.png", **kwargs):
     nx.draw_networkx_nodes(G, pos, node_size=deg, linewidths=1.0, alpha=0.90)
     nx.draw_networkx_edges(G, pos, width=1.0, style='dashed', alpha=0.75)
 
-    plt.show()
+    if path:
+        plt.savefig(path)
+    else:
+        plt.show()

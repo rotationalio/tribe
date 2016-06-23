@@ -97,7 +97,7 @@ class FreqDist(Counter):
         ylabel = "Counts"
 
         pylab.grid(True, color="silver")
-        if not "linewidth" in kwargs:
+        if "linewidth" not in kwargs:
             kwargs["linewidth"] = 2
 
         if "title" in kwargs:
