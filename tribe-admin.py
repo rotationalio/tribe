@@ -28,7 +28,8 @@ import networkx as nx
 from tribe.viz import *
 from tribe.utils import timeit
 from tribe.stats import FreqDist
-from tribe.extract import MBoxReader
+from tribe.utils import humanizedelta
+from tribe.extract import ConsoleMBoxReader as MBoxReader
 
 ##########################################################################
 ## Command Variables
@@ -58,7 +59,7 @@ def header_analysis(args):
         headers.plot()
 
     json.dump(headers, args.write)
-    return "Analysis complete in %0.3f seconds" % seconds
+    return "Analysis complete in {}".format(humanizedelta(seconds=seconds))
 
 
 def count_emails(args):
@@ -72,7 +73,8 @@ def count_emails(args):
         return reader.count()
 
     count, seconds = timed_inner(args.mbox[0])
-    return "Found %d emails in %0.3f seconds" % (count, seconds)
+    elapsed = humanizedelta(seconds=seconds)
+    return "Found {:,} emails in {}".format(count, elapsed)
 
 
 def extract(args):
@@ -81,16 +83,17 @@ def extract(args):
     """
 
     @timeit
-    def timed_inner(path):
+    def timed_inner(path, outpath):
         reader = MBoxReader(path)
-        return reader.extract_graph()
+        G = reader.extract_graph()
+        nx.write_graphml(G, outpath)
+        return G
 
-    print("Starting Graph extraction, could take time ...")
-    G, seconds = timed_inner(args.mbox[0])
-    print("Graph extraction took %0.3f seconds" % seconds)
+    print("Starting Graph extraction, a long running process")
+    G, seconds = timed_inner(args.mbox[0], args.write)
+    print("GraphML written out to {}".format(args.write.name))
 
-    nx.write_graphml(G, args.write)
-    return "GraphML written out to %s" % (args.write.name)
+    return "Graph extraction took {}".format(humanizedelta(seconds=seconds))
 
 
 def info(args):
@@ -114,6 +117,7 @@ def draw(args):
     G = nx.read_graphml(args.graphml[0])
     draw_social_network(G, args.write)
     return ""
+
 
 ##########################################################################
 ## Main Function and Methodology

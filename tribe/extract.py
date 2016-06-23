@@ -24,8 +24,10 @@ from mailbox import mbox
 from tribe.stats import FreqDist
 from itertools import combinations
 from email.utils import getaddresses
-from tribe.utils import parse_date, strfnow
 from tribe.emails import EmailMeta, EmailAddress
+from tribe.progress import AsyncProgress as Progress
+from tribe.utils import parse_date, strfnow, timeit, filesize
+
 
 ##########################################################################
 ## MBoxReader
@@ -107,6 +109,44 @@ class MBoxReader(object):
             G.add_edge(*link, weight=links.freq(link))
 
         return G
+
+
+class ConsoleMBoxReader(MBoxReader):
+    """
+    Wraps the __iter__ class with a console based progress bar for console
+    output and timing information (especially for large MBox files).
+
+    Note: in order for this to work, the super class must always use __iter__
+    Note: this is a bit more expensive because a count is always performed.
+    """
+
+    def __init__(self, *args, **kwargs):
+        # Get console settings from the kwargs
+        self.verbose = kwargs.pop('verbose', True)
+
+        # Initialize the MBoxReader
+        super(ConsoleMBoxReader, self).__init__(*args, **kwargs)
+
+    def __iter__(self):
+        if self.verbose:
+            print("Initializing MBox iteration on {} ({})".format(
+                self.path, filesize(self.path)
+            ))
+
+        bar = Progress()
+        for msg in super(ConsoleMBoxReader, self).__iter__():
+            yield msg
+            bar.update()
+        bar.stop()
+
+    def count(self, refresh=False):
+        """
+        Memoize the count function to minimize the reads of large MBox files.
+        """
+        if not hasattr(self, '_count') or not self._count or refresh:
+            self._count = sum(1 for _ in super(ConsoleMBoxReader, self).__iter__())
+        return self._count
+
 
 if __name__ == '__main__':
     # Dump extracted email meta data to a pickle file for testing

@@ -1,37 +1,37 @@
 <?xml version='1.0' encoding='utf-8'?>
 <graphml xmlns="http://graphml.graphdrawing.org/xmlns" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://graphml.graphdrawing.org/xmlns http://graphml.graphdrawing.org/xmlns/1.0/graphml.xsd">
   <key attr.name="weight" attr.type="double" for="edge" id="d3" />
-  <key attr.name="name" attr.type="string" for="graph" id="d2" />
-  <key attr.name="mbox" attr.type="string" for="graph" id="d1" />
+  <key attr.name="mbox" attr.type="string" for="graph" id="d2" />
+  <key attr.name="name" attr.type="string" for="graph" id="d1" />
   <key attr.name="extracted" attr.type="string" for="graph" id="d0" />
   <graph edgedefault="undirected">
-    <data key="d0">Wed Jun 22 16:45:59 2016 -0400</data>
-    <data key="d1">fixtures/test.mbox</data>
-    <data key="d2">Email Network</data>
-    <node id="bertram.moody@gmail.com" />
-    <node id="noreply@google.com" />
-    <node id="no-reply@accounts.google.com" />
-    <node id="mildred.tilcott@gmail.com" />
-    <node id="mail-noreply@google.com" />
+    <data key="d0">Wed Jun 22 20:09:28 2016 -0400</data>
+    <data key="d1">Email Network</data>
+    <data key="d2">fixtures/test.mbox</data>
     <node id="donotreply@wordpress.com" />
+    <node id="mildred.tilcott@gmail.com" />
+    <node id="noreply@google.com" />
+    <node id="mail-noreply@google.com" />
+    <node id="no-reply@accounts.google.com" />
     <node id="leopold.wentzel@gmail.com" />
-    <edge source="bertram.moody@gmail.com" target="leopold.wentzel@gmail.com">
-      <data key="d3">0.542857142857</data>
-    </edge>
-    <edge source="noreply@google.com" target="leopold.wentzel@gmail.com">
-      <data key="d3">0.00714285714286</data>
-    </edge>
-    <edge source="no-reply@accounts.google.com" target="leopold.wentzel@gmail.com">
-      <data key="d3">0.0142857142857</data>
+    <node id="bertram.moody@gmail.com" />
+    <edge source="donotreply@wordpress.com" target="leopold.wentzel@gmail.com">
+      <data key="d3">0.007142857142857143</data>
     </edge>
     <edge source="mildred.tilcott@gmail.com" target="leopold.wentzel@gmail.com">
-      <data key="d3">0.407142857143</data>
+      <data key="d3">0.40714285714285714</data>
+    </edge>
+    <edge source="noreply@google.com" target="leopold.wentzel@gmail.com">
+      <data key="d3">0.007142857142857143</data>
     </edge>
     <edge source="mail-noreply@google.com" target="leopold.wentzel@gmail.com">
-      <data key="d3">0.0214285714286</data>
+      <data key="d3">0.02142857142857143</data>
     </edge>
-    <edge source="donotreply@wordpress.com" target="leopold.wentzel@gmail.com">
-      <data key="d3">0.00714285714286</data>
+    <edge source="no-reply@accounts.google.com" target="leopold.wentzel@gmail.com">
+      <data key="d3">0.014285714285714285</data>
+    </edge>
+    <edge source="leopold.wentzel@gmail.com" target="bertram.moody@gmail.com">
+      <data key="d3">0.5428571428571428</data>
     </edge>
   </graph>
 </graphml>

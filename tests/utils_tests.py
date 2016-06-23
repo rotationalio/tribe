@@ -17,6 +17,7 @@ Testing for the utilities library in Tribe
 ## Imports
 ##########################################################################
 
+import os
 import unittest
 
 from tribe.utils import *
@@ -26,6 +27,9 @@ from dateutil import tz
 ##########################################################################
 ## Fixtures
 ##########################################################################
+
+FIXTURES = os.path.join(os.path.dirname(__file__), 'fixtures')
+MBOX     = os.path.join(FIXTURES, "test.mbox")
 
 FMT_EMAIL_DATETIME   = "%a, %d %b %Y %H:%M:%S %z"
 FMT_EMAIL_TZ_DATE    = "%a, %d %b %Y %H:%M:%S %z (%Z)"
@@ -65,7 +69,7 @@ def toutc(dt):
     return dt.astimezone(TZ_UTC)
 
 ##########################################################################
-## EmailAddress Tests
+## Date Parsing Tests
 ##########################################################################
 
 class DateParsingTests(unittest.TestCase):
@@ -128,3 +132,16 @@ class DateParsingTests(unittest.TestCase):
         dtpsd = parse_date(dtstr)
         self.assertIsNotNone(dtpsd)
         self.assertIsNotNone(dtpsd.tzinfo)
+
+
+##########################################################################
+## Other Utility Tests
+##########################################################################
+
+class UtilityTests(unittest.TestCase):
+
+    def test_filesize(self):
+        """
+        Test the human readable filesize function
+        """
+        self.assertEqual(filesize(MBOX), "922.8KiB")
