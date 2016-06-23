@@ -7,7 +7,7 @@
 # Copyright (C) 2016 District Data Labs
 # For license information, see LICENSE.txt
 #
-# ID: mailer.py [] benjamin@bengfort.com $
+# ID: mailer.py [ec79c1d] benjamin@bengfort.com $
 
 """
 This small utility function sends random emails to test accounts to generate

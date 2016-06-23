@@ -7,7 +7,7 @@
 # Copyright (C) 2016 District Data Labs
 # For license information, see LICENSE.txt
 #
-# ID: progress.py [] benjamin@bengfort.com $
+# ID: progress.py [43fd3e1] benjamin@bengfort.com $
 
 """
 Provides a progress indicator and an elapsed time on the console.
