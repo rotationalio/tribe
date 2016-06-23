@@ -22,8 +22,8 @@ import time
 
 from functools import wraps
 from dateutil import parser
+from datetime import datetime
 from dateutil.tz import tzlocal, tzutc
-from datetime import datetime, timedelta
 from dateutil.relativedelta import relativedelta
 from email.utils import unquote as email_unquote
 from email.utils import parsedate_tz, mktime_tz

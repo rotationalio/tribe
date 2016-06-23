@@ -46,4 +46,4 @@ class TribeConfiguration(confire.Configuration):
 settings = TribeConfiguration.load()
 
 if __name__ == '__main__':
-    print settings
+    print(settings)
