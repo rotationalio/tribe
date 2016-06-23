@@ -7,7 +7,7 @@
 # Copyright (C) 2016 District Data Labs
 # For license information, see LICENSE.txt
 #
-# ID: extract_tests.py [] benjamin@bengfort.com $
+# ID: extract_tests.py [cc23aed] benjamin@bengfort.com $
 
 """
 Test the tribe extraction module

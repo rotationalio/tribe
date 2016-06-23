@@ -7,7 +7,7 @@
 # Copyright (C) 2016 District Data Labs
 # For license information, see LICENSE.txt
 #
-# ID: admin_script_tests.py [] benjamin@bengfort.com $
+# ID: admin_script_tests.py [6bf9822] benjamin@bengfort.com $
 
 """
 Use the subprocess module to execute tribe-admin.py for testing.
