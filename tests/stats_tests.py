@@ -7,7 +7,7 @@
 # Copyright (C) 2014 District Data Labs
 # For license information, see LICENSE.txt
 #
-# ID: stats_tests.py [] benjamin@bengfort.com $
+# ID: stats_tests.py [ceb1cca] benjamin@bengfort.com $
 
 """
 Testing for the stats library in Tribe
