@@ -152,4 +152,8 @@ def memoized(fget):
             setattr(self, attr_name, fget(self))
         return getattr(self, attr_name)
 
-    return property(fget_memoized)
+    def fdel(self):
+        if hasattr(self, attr_name):
+            delattr(self, attr_name)
+
+    return property(fget_memoized, fdel=fdel)

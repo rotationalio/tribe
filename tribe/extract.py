@@ -125,13 +125,15 @@ class MBoxReader(object):
 
 
         # Keep track of all the email to email links
-        links = FreqDist()
+        links  = FreqDist()
+        emails = 0
 
         # Iterate over all the extracted emails
         # Catch exceptions, if any, and move forward
         # NOTE: This will allow the progress bar to work
         # NOTE: This will build the graph data structure in memory
         for email in self.extract():
+            emails += 1
             try:
                 for combo in relationships(email):
                     links[combo] += 1
@@ -139,10 +141,22 @@ class MBoxReader(object):
                 self.errors[e] += 1
                 continue
 
-        # Construct the networkx graph and add edges
-        G = nx.Graph(name="Email Network", mbox=self.path, extracted=strfnow())
+        # Construct the networkx graph with details about generation.
+        G = nx.Graph(
+            name="Email Network", mbox=self.path,
+            extracted=strfnow(), n_emails=emails,
+            mbox_size=filesize(self.path),
+        )
+
+        # Add edges to the graph with various weight properties from counts.
+        # NOTE: memoization is used here in the FreqDist to speed things up.
         for link in links.keys():
-            G.add_edge(*link, weight=links.freq(link))
+            link_data = {
+                "weight": links.freq(link),
+                "count":  links[link],
+                "norm":   links.norm(link),
+            }
+            G.add_edge(*link, **link_data)
 
         # Return the generated graph
         return G
