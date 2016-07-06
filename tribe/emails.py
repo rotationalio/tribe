@@ -17,8 +17,6 @@ Data Structures for Email and EmailAddresses
 ## Imports
 ##########################################################################
 
-import re
-
 from collections import namedtuple
 from email.utils import parseaddr, formataddr
 from tribe.utils import unquote

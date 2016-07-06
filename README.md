@@ -114,13 +114,21 @@ The release versions that are sent to the Python package index (PyPI) are also t
 
 The versioning uses a three part version system, "a.b.c" - "a" represents a major release that may not be backwards compatible. "b" is incremented on minor releases that may contain extra features, but are backwards compatible. "c" releases are bug fixes or other micro changes that developers should feel free to immediately update to.
 
+### Version 1.3
+
+* **tag**: [v1.3](https://github.com/DistrictDataLabs/tribe/releases/tag/v1.3)
+* **release**:  Wednesday, July 6, 2016
+* **commit**: [see tag](#)
+
+After some feedback about the length of time it was taking to create the edges in the NetworkX graph, we modified the `FreqDist` object to memoize calls to N, B, and M. This means that on a per edge basis, far fewer complete traversals of the distribution are carried out. Already we have observed minutes worth of performance improvements as a result. The Graph also now carries more information including edge weights by frequency, count, and by L1 norm. The Graph itself carries email count and file size information data alongside other information.
+
 ### Version 1.2
 
 * **tag**: [v1.2](https://github.com/DistrictDataLabs/tribe/releases/tag/v1.2)
 * **release**:  Wednesday, June 22, 2016
-* **commit**: [see tag](#)
+* **commit**: [cac3d6c](https://github.com/DistrictDataLabs/tribe/commit/cac3d6cb3f95e9d114528d9beef5307c16ec7266)
 
-In this release we have improved some of the handling code to make things a bit more robust with students who work on a variety of operating systems. For example we have added a progress indicator so that something appears to be happening on very large mbox files (and you're not left wondering). Additionally we have added better error handling so one bad email doesn't ruin your day. We also made the library Python 2.7 and Python 3.5 compatible with a better test suite. 
+In this release we have improved some of the handling code to make things a bit more robust with students who work on a variety of operating systems. For example we have added a progress indicator so that something appears to be happening on very large mbox files (and you're not left wondering). Additionally we have added better error handling so one bad email doesn't ruin your day. We also made the library Python 2.7 and Python 3.5 compatible with a better test suite.
 
 ### Version 1.1.2
 
