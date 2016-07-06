@@ -24,7 +24,7 @@ import unittest
 ## Module Constants
 ##########################################################################
 
-TEST_VERSION = "1.2" ## Also the expected version of the package
+TEST_VERSION = "1.3" ## Also the expected version of the package
 
 ##########################################################################
 ## Initialization Tests
