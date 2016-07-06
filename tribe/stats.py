@@ -21,6 +21,7 @@ import json
 
 from itertools import islice
 from collections import Counter
+from tribe.utils import memoized
 
 ##########################################################################
 ## Frequency Distribution
@@ -43,18 +44,40 @@ class FreqDist(Counter):
             dist[sample] = count
         return dist
 
+    @memoized
     def N(self):
         """
         The total number of samples that have been recorded. For unique
         samples with counts greater than zero, use B.
+
+        Note: N is memoized meaning if you change the frequency distribution
+        after accessing this property, you then need to del the property to
+        force a recomputation of the value.
         """
         return sum(self.values())
 
+    @memoized
     def B(self):
         """
         Return the number of sample values or bins that have counts > 0.
+
+        Note: B is memoized meaning if you change the frequency distribution
+        after accessing this property, you then need to del the property to
+        force a recomputation of the value.
         """
         return len(self)
+
+    @memoized
+    def M(self):
+        """
+        Returns the magnitude or the maximum count of all samples.
+
+        Note: M is memoized meaning if you change the frequency distribution
+        after accessing this property, you then need to del the property to
+        force a recomputation of the value.
+        """
+        if len(self) == 0: return 0
+        return max(self.values())
 
     def freq(self, key):
         """
@@ -62,8 +85,17 @@ class FreqDist(Counter):
         sample divided by the total number of outcomes. Frequencies are
         always real numbers in the range [0,1].
         """
-        if self.N() == 0: return 0
-        return float(self[key]) / self.N()
+        if self.N == 0: return 0
+        return float(self[key]) / self.N
+
+    def norm(self, key):
+        """
+        Returns the norm of a sample defined as the count of the sample
+        divided by the count of the most frequent sample. Norms are always
+        real numbers in the range [0,1].
+        """
+        if self.M == 0: return 0
+        return float(self[key]) / self.M
 
     def ratio(self, a, b):
         """
@@ -127,4 +159,4 @@ class FreqDist(Counter):
         return 'FreqDist({{{0}}})'.format(', '.join(items))
 
     def __str__(self):
-        return "<FreqDist with %i samples and %i outcomes>" % (self.B(), self.N())
+        return "<FreqDist with {} samples and {} outcomes>".format(self.B, self.N)
