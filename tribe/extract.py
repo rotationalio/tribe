@@ -24,9 +24,9 @@ from mailbox import mbox
 from tribe.stats import FreqDist
 from itertools import combinations
 from email.utils import getaddresses
-from tribe.emails import EmailMeta, EmailAddress
 from tribe.progress import AsyncProgress as Progress
-from tribe.utils import parse_date, strfnow, filesize
+from tribe.emails import EmailMeta, EmailAddress, getheaders
+from tribe.utils import parse_date, strfnow, filesize, ISO8601_DATETIME
 
 
 ##########################################################################
@@ -79,8 +79,8 @@ class MBoxReader(object):
             source = msg.get('From', '')
             if not source: return None
 
-            tos = msg.get_all('To', []) + msg.get_all('Resent-To', [])
-            ccs = msg.get_all('Cc', []) + msg.get_all('Resent-Cc', [])
+            tos = getheaders(msg, ['To', 'Resent-To'])
+            ccs = getheaders(msg, ['Cc', 'Resent-Cc'])
 
             # construct data output
             return EmailMeta(
@@ -100,8 +100,39 @@ class MBoxReader(object):
                 if email is not None:
                     yield email
             except Exception as e:
-                self.errors[e] += 1
+                self.errors[str(e)] += 1
                 continue
+
+    def extract_series(self):
+        """
+        Extracts a CSV of time series subject, predicate, object tuples.
+        The CSV row that is returned is as follows:
+
+            (src email, dst email, ISO timestamp, src name, dst name, subject)
+        """
+
+        # Go through every email in the mbox.
+        for email in self.extract():
+
+            # Parse the date representation
+            try:
+                timestamp = email.date.strftime(ISO8601_DATETIME)
+            except Exception as e:
+                self.errors[str(e)] += 1
+                continue
+
+            people = [email.sender] + email.recipients + email.copied   # Construct all pairs of relationships
+            people = filter(lambda p: p is not None, people)            # Filter out any None addresses
+            people = set(addr.email for addr in people if addr.email)   # Obtain only unique people
+            people = sorted(people)                                     # Sort lexicographically for combinations
+
+            for source, target in combinations(people, 2):
+                yield (
+                    source,
+                    target,
+                    timestamp,
+                    email.subject,
+                )
 
     def extract_graph(self):
         """
@@ -184,16 +215,18 @@ class ConsoleMBoxReader(MBoxReader):
                 self.path, filesize(self.path)
             ))
 
-        # Build the progress bar
-        pbar = Progress()
+        # Build the progress bar and count messages
+        self.pbar = Progress()
+        self._count = 0
 
         # Iterate through the messages and update the progress bar
         for msg in super(ConsoleMBoxReader, self).__iter__():
+            self._count += 1
             yield msg
-            pbar.update()
+            self.pbar.update()
 
         # Stop the progress bar and flush
-        pbar.stop()
+        self.pbar.stop()
 
     def count(self, refresh=False):
         """

@@ -19,6 +19,7 @@ Administrative utility for working with Tribe data
 ##########################################################################
 
 import sys
+import csv
 import json
 import tribe
 import argparse
@@ -102,6 +103,39 @@ def extract(args):
     return "Graph extraction took {}".format(humanizedelta(seconds=seconds))
 
 
+def extract_series(args):
+    """
+    Extract a time series of SPOs from an MBox as CSV
+    """
+
+    @timeit
+    def timed_inner(path, stream):
+        reader = MBoxReader(path)
+        writer = csv.writer(stream)
+
+        for idx, row in enumerate(reader.extract_series()):
+            writer.writerow(row)
+
+        return idx+1, len(reader), reader.errors
+
+    print("Starting time series extraction, a long running process")
+    (spos, emails, errors), seconds = timed_inner(args.mbox[0], args.write)
+    print("SPO series written out to {}".format(args.write.name))
+
+    if errors:
+        print("\nThe following errors were encountered:")
+        for err, num in errors.most_common():
+            print("    {}: {}".format(num, err))
+        print("\n")
+    else:
+        print("\nNo errors encountered in processing\n")
+
+    errors = sum(errors.values())
+    return "{:,} SPOs extracted from {:,} emails ({:,} errors) in {}".format(
+        spos, emails, errors, humanizedelta(seconds=seconds)
+    )
+
+
 def info(args):
     """
     Print information about a GraphML file
@@ -156,6 +190,12 @@ def main(*args):
     extract_parser.add_argument('mbox', type=str, nargs=1, help='Path or location to MBox for analysis')
     extract_parser.set_defaults(func=extract)
 
+    # Series Command
+    extract_parser = subparsers.add_parser('series', help='Extract a time series of SPOs from an MBox')
+    extract_parser.add_argument('-w', '--write', type=argparse.FileType('w'), default=sys.stdout, help='Location to write data to')
+    extract_parser.add_argument('mbox', type=str, nargs=1, help='Path or location to MBox for analysis')
+    extract_parser.set_defaults(func=extract_series)
+
     # Graph Info Command
     info_parser = subparsers.add_parser('info', help='Print information about a GraphML file')
     info_parser.add_argument('graphml', nargs="+", type=argparse.FileType('r'), help='Location of MBox(es) to get info for')
@@ -169,11 +209,11 @@ def main(*args):
 
     # Handle input from the command line
     args = parser.parse_args()            # Parse the arguments
-    try:
-        msg = args.func(args)             # Call the default function
-        parser.exit(0, msg+"\n")               # Exit cleanly with message
-    except Exception as e:
-        parser.error(str(e))              # Exit with error
+    # try:
+    msg = args.func(args)             # Call the default function
+    parser.exit(0, msg+"\n")               # Exit cleanly with message
+    # except Exception as e:
+    #     parser.error(str(e))              # Exit with error
 
 if __name__ == '__main__':
     main(*sys.argv[1:])

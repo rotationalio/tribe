@@ -38,6 +38,28 @@ DATE        = "date"        # Should be a parsed Python datetime
 META_FIELDS = (SENDER, RECIPIENTS, COPIED, SUBJECT, DATE)
 EmailMeta   = namedtuple("EmailMeta", META_FIELDS)
 
+
+##########################################################################
+## Helper Methods
+##########################################################################
+
+def getheaders(msg, names):
+    """
+    Helper function for extracting all headers from the email address.
+    Note that msg.get_all is case insensitive, so you only have to pass the
+    variants of the names you wish to retreive.
+    """
+    if isinstance(names, str):
+        names = [names,]
+
+    return [
+        value
+        for name in names
+        for value in msg.get_all(name, [])
+        if value
+    ]
+
+
 ##########################################################################
 ## Email Parser
 ##########################################################################
